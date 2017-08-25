@@ -17,4 +17,4 @@ deploy:
   - out/accept-mr_windows_amd64.exe
   on:
     tags: true
-
+    all_branches: true
