@@ -39,7 +39,7 @@ FILENAME="${NAME}_${OS}_${ARCH}"
 if [[ "$OS" == "windows" ]]; then
     FILENAME="${FILENAME}.exe"
 fi
-LINK="https://github.com/${OWNER}/${REPO_NAME}/releases/download/v${VERSION}/${FILENAME}"
+LINK="https://github.com/${OWNER}/${REPO_NAME}/releases/download/${VERSION}/${FILENAME}"
 if [[ "$OS" == "windows" ]]; then
     FILEOUTPUT="${FILENAME}"
 else
