@@ -1,0 +1,19 @@
+language: go
+go:
+- 1.8
+script:
+- echo ""
+after_success:
+- bin/build_all
+deploy:
+  provider: releases
+  api_key:
+    secure: jcVVbEtTMbtZ8sy8xOgNM8oXYBcu2FFG7accaaq2UgCpjHpQ6WNobhI7ek/lNh4USGjrcj+2AODPuskHBP42SaEB/TI+Zi+8TYkCb6XyQosSHSKOTfDE3D2fKfFvQNnEWNGvaDFfZo6a5qgqbdUvnT049XXwRgd2sGjikasGbBtG+uSQLkM1AgZPYy/s90vUCOmGNWbCyGgGNXJ9qxDNV8rmS3HLYCDuQ6EpzkcdyQCI387HvaZ2Xg+4ZLPL6R8VV0KkEt3Zn4ouNLqSLraNaafCaVH2QjS/PHa4xtW8CKwTXUxCEnWamDbts7lJsddfUsGvX3eaM71lLAsdBa4HKemBVcxllA9DlE/8Bi2pWUJqDopd7WmSpVK/2Dt31be6OcJQQHKDPpD3ntgIY5VeRbe5ksSiLjUENPE3UXhgtACmbzBNrT8rnimWRGgjL9bN4OHCp5hEESgZ3fooU79HySJ6Bh8bwpQnSD9mQmGcdezK3euCMytCws7R7cqbGZbT3j0BHOprbbliL8H1wEoCEaEAzbjcN/gWEegFe2qLH1/ZWuGULBTQ/sXccaubxktwjT2AO7F6pwcJ5Vx3nNKSh6Kc3J6U/6jt45uMynj0X4MqzkhRlros7iX1QlEBc904Vkxcz8/F3DpzpwLY8Y57iOE53M8wuOfV/aQMl49r/GU=
+  file:
+  - out/accept-mr_darwin_amd64
+  - out/accept-mr_linux_386
+  - out/accept-mr_linux_amd64
+  - out/accept-mr_windows_386.exe
+  - out/accept-mr_windows_amd64.exe
+  on:
+    tags: true
