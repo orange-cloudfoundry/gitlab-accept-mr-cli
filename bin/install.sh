@@ -7,7 +7,7 @@ OWNER="ArthurHlt"
 cd -- "${TMPDIR:?NO TEMP DIRECTORY FOUND!}" || exit
 cd -
 echo "Installing ${NAME}..."
-if [[ "$OSTYPE" == "linux-gnu" ]]; then
+if [[ "$OSTYPE" == "linux-gnu" || "$(uname -s)" == "Linux" ]]; then
     OS="linux"
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     OS="darwin"
