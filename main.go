@@ -140,10 +140,7 @@ func acceptMr(c *cli.Context) error {
 			continue
 		}
 		if !mr.WorkInProgress && buildSucceed {
-			_, _, err := client.Commits.SetCommitStatus(projName, mr.Sha, &gitlab.SetCommitStatusOptions{
-				State: gitlab.Pending,
-				Name:  &pipelineName,
-			})
+			err := updateCommitStatus(client, projName, pipelineName, mr.Sha)
 			if err != nil {
 				entry.Errorf("Error occurred while changing status: %s ", err.Error())
 				nbErrors++
@@ -161,6 +158,20 @@ func acceptMr(c *cli.Context) error {
 	}
 	if c.GlobalBool("failed-on-error") && nbErrors > 0 {
 		return fmt.Errorf("You have %d merge request which can't be accepted", nbErrors)
+	}
+	return nil
+}
+func updateCommitStatus(client *gitlab.Client, projName, pipelineName, sha string) error {
+	statuses, _, _ := client.Commits.GetCommitStatuses(projName, sha, nil)
+	if len(statuses) > 0 && statuses[0].Status != "" {
+		return nil
+	}
+	_, _, err := client.Commits.SetCommitStatus(projName, sha, &gitlab.SetCommitStatusOptions{
+		State: gitlab.Pending,
+		Name:  &pipelineName,
+	})
+	if err != nil {
+		return err
 	}
 	return nil
 }
