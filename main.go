@@ -119,7 +119,7 @@ func acceptMr(c *cli.Context) error {
 	buildSucceed := c.GlobalBool("on-build-succeed")
 	options := &gitlab.AcceptMergeRequestOptions{}
 	if buildSucceed {
-		options.MergeWhenBuildSucceeds = &buildSucceed
+		options.MergeWhenPipelineSucceeds = &buildSucceed
 	}
 	for _, mr := range mrs {
 		entry := log.WithFields(log.Fields(map[string]interface{}{
@@ -130,7 +130,7 @@ func acceptMr(c *cli.Context) error {
 			entry.Warn("Skipping merge request, it is in WIP")
 			continue
 		}
-		if buildSucceed && mr.MergeWhenBuildSucceeds {
+		if buildSucceed && mr.MergeWhenPipelineSucceeds {
 			continue
 		}
 		if !mr.WorkInProgress && buildSucceed {
@@ -138,7 +138,9 @@ func acceptMr(c *cli.Context) error {
 				State: gitlab.Pending,
 			})
 			if err != nil {
-				return err
+				entry.Errorf("Error occurred while changing status: %s ", err.Error())
+				nbErrors++
+				continue
 			}
 		}
 		entry.Info("Accepting merge request ...")
