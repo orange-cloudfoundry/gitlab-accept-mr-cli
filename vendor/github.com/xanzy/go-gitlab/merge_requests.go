@@ -91,6 +91,7 @@ type MergeRequest struct {
 		RenamedFile bool   `json:"renamed_file"`
 		DeletedFile bool   `json:"deleted_file"`
 	} `json:"changes"`
+	Sha    string `json:"sha"`
 	WebURL string `json:"web_url"`
 }
 
