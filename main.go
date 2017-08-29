@@ -35,6 +35,11 @@ func main() {
 			Usage:  "Project name where accepting mr (e.g.: owner/repo)",
 			EnvVar: "GITLAB_PROJECT",
 		},
+		cli.StringFlag{
+			Name:  "pipeline-name, pn",
+			Usage: "Set a default pipeline name when using on-build-succeed option",
+			Value: "accept-mr",
+		},
 		cli.BoolFlag{
 			Name:  "failed-on-error, e",
 			Usage: "If true accept in error exit with status code > 0",
@@ -117,6 +122,7 @@ func acceptMr(c *cli.Context) error {
 	}
 	nbErrors := 0
 	buildSucceed := c.GlobalBool("on-build-succeed")
+	pipelineName := c.GlobalString("pipeline-name")
 	options := &gitlab.AcceptMergeRequestOptions{}
 	if buildSucceed {
 		options.MergeWhenPipelineSucceeds = &buildSucceed
@@ -136,6 +142,7 @@ func acceptMr(c *cli.Context) error {
 		if !mr.WorkInProgress && buildSucceed {
 			_, _, err := client.Commits.SetCommitStatus(projName, mr.Sha, &gitlab.SetCommitStatusOptions{
 				State: gitlab.Pending,
+				Name:  &pipelineName,
 			})
 			if err != nil {
 				entry.Errorf("Error occurred while changing status: %s ", err.Error())

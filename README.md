@@ -49,14 +49,15 @@ COMMANDS:
      help, h  Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --url value, -u value      Url to your gitlab [$GITLAB_URL]
-   --token value, -t value    User token to access the api [$GITLAB_TOKEN]
-   --project value, -p value  Project name where accepting mr (e.g.: owner/repo) [$GITLAB_PROJECT]
-   --failed-on-error, -e      If true accept in error exit with status code > 0
-   --insecure, -k             Ignore certificate validation
-   --log-json, -j             Write log in json
-   --no-color                 Logger will not display colors
-   --on-build-succeed, --bs   Merge request will automatically accepted if pipeline succeeded
-   --help, -h                 show help
-   --version, -v              print the version
+   --url value, -u value              Url to your gitlab [$GITLAB_URL]
+   --token value, -t value            User token to access the api [$GITLAB_TOKEN]
+   --project value, -p value          Project name where accepting mr (e.g.: owner/repo) [$GITLAB_PROJECT]
+   --pipeline-name value, --pn value  Set a default pipeline name when using on-build-succeed option (default: "accept-mr")
+   --failed-on-error, -e              If true accept in error exit with status code > 0
+   --insecure, -k                     Ignore certificate validation
+   --log-json, -j                     Write log in json
+   --no-color                         Logger will not display colors
+   --on-build-succeed, --bs           Merge request will automatically accepted if pipeline succeeded
+   --help, -h                         show help
+   --version, -v                      print the version
 ```
