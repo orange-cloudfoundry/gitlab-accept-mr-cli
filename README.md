@@ -43,7 +43,7 @@ USAGE:
    accept-mr [global options] command [command options] [arguments...]
 
 VERSION:
-   1.1.0
+   1.2.0
 
 COMMANDS:
      help, h  Shows a list of commands or help for one command
@@ -52,8 +52,9 @@ GLOBAL OPTIONS:
    --url value, -u value               Url to your gitlab [$GITLAB_URL]
    --token value, -t value             User token to access the api [$GITLAB_TOKEN]
    --project value, -p value           Project name where accepting mr (e.g.: owner/repo) [$GITLAB_PROJECT]
-   --pipeline-name value, --pn value   Set a default pipeline name when using on-build-succeed option (default: "accept-mr")
-   --pipeline-state value, --ps value  Set a default pipeline state when using on-build-succeed option (can be pending, running, success, failed or canceled) (default: "running")
+   --pipeline-name value, --pn value   Set a default pipeline name when using on-build-succeed option
+   --pipeline-state value, --ps value  Set a default pipeline state when using on-build-succeed option (can be pending or running)
+   --message value, -m value           Set a merge commit message
    --failed-on-error, -e               If set accept in error exit with status code > 0
    --insecure, -k                      Ignore certificate validation
    --log-json, -j                      Write log in json
