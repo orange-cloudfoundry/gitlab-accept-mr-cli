@@ -24,7 +24,7 @@ func (a AcceptMr) Run() error {
 		options.ShouldRemoveSourceBranch = &a.RemoveSourceBranch
 	}
 	state := "opened"
-	mrs, _, err := a.Client.MergeRequests.ListMergeRequests(a.ProjectName, &gitlab.ListMergeRequestsOptions{
+	mrs, _, err := a.Client.MergeRequests.ListProjectMergeRequests(a.ProjectName, &gitlab.ListProjectMergeRequestsOptions{
 		State: &state,
 	})
 	if err != nil {
@@ -57,12 +57,14 @@ func (a AcceptMr) Run() error {
 	}
 	return nil
 }
+
 func (a AcceptMr) accept(mr *gitlab.MergeRequest, opt *gitlab.AcceptMergeRequestOptions) error {
 	if a.OnBuildSucceed {
 		return a.acceptBuildSucceed(mr, opt)
 	}
 	return a.acceptMrRequest(mr, opt)
 }
+
 func (a AcceptMr) acceptMrRequest(mr *gitlab.MergeRequest, opt *gitlab.AcceptMergeRequestOptions) error {
 	if a.Message != "" {
 		_, _, err := a.Client.Notes.CreateMergeRequestNote(a.ProjectName, mr.IID, &gitlab.CreateMergeRequestNoteOptions{
@@ -72,23 +74,43 @@ func (a AcceptMr) acceptMrRequest(mr *gitlab.MergeRequest, opt *gitlab.AcceptMer
 			return fmt.Errorf("Error when commenting on merge request: %s ", err.Error())
 		}
 	}
-	_, _, err := a.Client.MergeRequests.AcceptMergeRequest(a.ProjectName, mr.IID, opt)
+	info, _, err := a.Client.MergeRequests.AcceptMergeRequest(a.ProjectName, mr.IID, opt)
 	if err != nil {
 		return fmt.Errorf("Error occurred while accepting: %s ", err.Error())
 	}
+
+	if len(info.MergeError) != 0 {
+		log.WithFields(log.Fields(map[string]interface{}{
+			"title": mr.Title,
+		})).Warnf("could not merge request due to merge error: %s", info.MergeError)
+
+		// Best effort, no error checking
+		newTitle := "WIP: " + mr.Title
+		a.Client.MergeRequests.UpdateMergeRequest(a.ProjectName, mr.IID, &gitlab.UpdateMergeRequestOptions{
+			Title: &newTitle,
+		})
+
+		// Best effort, no error checking
+		msg := "Could not merge automatically due to merge error: " + info.MergeError
+		a.Client.Notes.CreateMergeRequestNote(a.ProjectName, mr.IID, &gitlab.CreateMergeRequestNoteOptions{
+			Body: &msg,
+		})
+	}
 	return nil
 }
+
 func (a AcceptMr) acceptBuildSucceed(mr *gitlab.MergeRequest, opt *gitlab.AcceptMergeRequestOptions) error {
-	statuses, _, _ := a.Client.Commits.GetCommitStatuses(a.ProjectName, mr.Sha, nil)
+	statuses, _, _ := a.Client.Commits.GetCommitStatuses(a.ProjectName, mr.SHA, nil)
 	if statuses != nil && len(statuses) > 0 && statuses[0].Status == string(gitlab.Success) {
 		return a.acceptMrRequest(mr, opt)
 	}
-	err := a.updateCommitStatus(statuses, mr.Sha)
+	err := a.updateCommitStatus(statuses, mr.SHA)
 	if err != nil {
 		return fmt.Errorf("Error occurred while changing status: %s ", err.Error())
 	}
 	return nil
 }
+
 func (a AcceptMr) updateCommitStatus(statuses []*gitlab.CommitStatus, sha string) error {
 	if statuses != nil && len(statuses) > 0 && statuses[0].Status != "" {
 		return nil
@@ -102,8 +124,11 @@ func (a AcceptMr) updateCommitStatus(statuses []*gitlab.CommitStatus, sha string
 	if a.PipelineName == "" {
 		a.PipelineState = "accept-mr"
 	}
+
+	state := strings.ToLower(a.PipelineState)
+	stateValue := gitlab.BuildStateValue(state)
 	_, _, err := a.Client.Commits.SetCommitStatus(a.ProjectName, sha, &gitlab.SetCommitStatusOptions{
-		State: gitlab.BuildState(strings.ToLower(a.PipelineState)),
+		State: *gitlab.BuildState(stateValue),
 		Name:  &a.PipelineName,
 	})
 	if err != nil {
