@@ -1,21 +1,18 @@
 language: go
 go:
-- 1.8
+- '1.12'
 script:
 - echo ""
 after_success:
 - bin/build_all
 deploy:
-  skip_cleanup: true
   provider: releases
   api_key:
-    secure: n945Pyjp56ZmPW4LsH22emN5ltO+MXTxb/qTJ409rsIWueky80s2K96Jd0a6mEctniOQQJO5BJGbok0AxKArQt3GxCDNyfg+BGhCmrwcD3HwCH2UZQ6Qt35tj4s75deCl1SknNymL/TQE5QIj1NCd1kdmO/+9ZAXXYVSwc//5yZxpXcgZzvF560zozg9LeiWig/3H0j+r5cLH0pt0f6xS9ZBb9vixDnstcai1jKvCQlpguGUwnTKgO0LlQ25UjcV6j8S4zy/lQXEn9ZiKxsbdGsedljqzuFa2COUK4KPCYtJ67FvFLmTg0V3zeg/YQUwa6hCt3bbRIdo0sVAI2D1zjx3mMmLNp+o6zSEAOpuj/SAu5LNjQ1RzQkpdNTplFWkJu0P5wlpWgTFsru1oeMG4hOcB+IZLmtoKixI1o+lRXb5BAReDTe6D5sc15wTKX16br7Tn2d7grvIDzeHLqwMj9WlUGez0i1il5rV12wqte5b5pPI+Ztn71k25lZfxjMBmJEGhKd3jMEMu5jtJ6R2lWzgi8c4TPJ5JZF0iHR8E+fpRQ8A++Q0pH7hyQO0QR0J8tdnZKtliTtNdr1WLptF9MNCbBCg/KzVle9C/QV0+f/ziKaFQDnelydDaA2EhozaDJdNUFrBh/uoA8Mk3qO9B8Pst7LHUhp2TdWp9/e9qso=
+    secure: U3sINUl7YCPxy8Qjuqj3q7Mg+UD7BKMYu9qvzu6zG4+9kkaEy7Fm/prfCJC8BEUGrB1xsneIKJR8MVB6sXZVmzZQfwmxplTKJ2paCHUHLpjbJWR54vd82EUiqjL5IJfY/1HjBVcwcilyCj4JWytLKZZmSmJ8iGK7ywV34J6GsqjQIA6jgcygktJh92e9YK7QusfRcN9q12fvxJEs6g/6z5jBWG7hmQlNqVEfbP8Reyebv5mQnHfzOvBFR+ZDOh+vONJi7mKbgCDZcH9VryjEi1HbUsXkF8wKamNgH0DKeAquZBWUO/PkScJg2j5Ss/XTcI7bixw/T59nZ7VEY5tgmolHNy5UjFR6b840Os0LirB7LITOWIVDeR3TIwqGc8GTJfonLsZ4Qw6OvakRZm2+wrypBLDRX7fTnSpf31+Obkih79ckMhnJHiXlrtiiybMBTf1nLw0Ujq0Lr+KuFAkjrx+HYZNOMAU9sbonG1pDjRk83SjqX2PVD3T9K96Tfk4ZOysiqrVxuJHQkGf+Nt4Xve7AMl0fgmuYkmqeoQfJyoroYJPeaEmYoMYdw2qrBPOtw/GESmmE1Q9ody44pMWTzibqtYYl66lGZBGUJYPF/MBkkFvp4gAWAHE/HaTtXxogZlERl6A6thQMl6ch7ccYfM3cgnaWZfrSWT88oUfzMko=
+  file_glob: true
   file:
-  - out/accept-mr_darwin_amd64
-  - out/accept-mr_linux_386
-  - out/accept-mr_linux_amd64
-  - out/accept-mr_windows_386.exe
-  - out/accept-mr_windows_amd64.exe
+    - 'out/*'
   on:
     tags: true
     all_branches: true
+  skip_cleanup: true
