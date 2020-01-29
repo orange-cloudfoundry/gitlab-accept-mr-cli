@@ -1,10 +1,11 @@
 language: go
 go:
-- '1.12'
+  - '1.13'
 script:
-- echo ""
+  - echo ""
 after_success:
-- bin/build_all
+  - export GO111MODULE=on
+  - bin/build_all
 deploy:
   provider: releases
   api_key:

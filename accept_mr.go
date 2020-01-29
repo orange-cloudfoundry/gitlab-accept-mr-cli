@@ -4,6 +4,7 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"github.com/xanzy/go-gitlab"
+	"net/http"
 	"strings"
 )
 
@@ -66,6 +67,14 @@ func (a AcceptMr) accept(mr *gitlab.MergeRequest, opt *gitlab.AcceptMergeRequest
 }
 
 func (a AcceptMr) acceptMrRequest(mr *gitlab.MergeRequest, opt *gitlab.AcceptMergeRequestOptions) error {
+	info, resp, err := a.Client.MergeRequests.AcceptMergeRequest(a.ProjectName, mr.IID, opt)
+	if err != nil {
+		if resp != nil && resp.StatusCode == http.StatusMethodNotAllowed {
+			return fmt.Errorf("Merging process is blocked (grey button on MR web view). MR is probably in unresolved thread state.")
+		}
+		return fmt.Errorf("Error occurred while accepting: %s ", err.Error())
+	}
+
 	if a.Message != "" {
 		_, _, err := a.Client.Notes.CreateMergeRequestNote(a.ProjectName, mr.IID, &gitlab.CreateMergeRequestNoteOptions{
 			Body: &a.Message,
@@ -73,10 +82,6 @@ func (a AcceptMr) acceptMrRequest(mr *gitlab.MergeRequest, opt *gitlab.AcceptMer
 		if err != nil {
 			return fmt.Errorf("Error when commenting on merge request: %s ", err.Error())
 		}
-	}
-	info, _, err := a.Client.MergeRequests.AcceptMergeRequest(a.ProjectName, mr.IID, opt)
-	if err != nil {
-		return fmt.Errorf("Error occurred while accepting: %s ", err.Error())
 	}
 
 	if len(info.MergeError) != 0 {
