@@ -107,23 +107,23 @@ func (a AcceptMr) acceptMrRequest(mr *gitlab.MergeRequest, opt *gitlab.AcceptMer
 			return fmt.Errorf("Error occurred while commenting on merge request: %s ", err.Error())
 		}
 	}
-	return err
+	return nil
 }
 
 func (a AcceptMr) acceptBuildSucceed(mr *gitlab.MergeRequest, opt *gitlab.AcceptMergeRequestOptions) error {
 	statuses, _, _ := a.Client.Commits.GetCommitStatuses(a.ProjectName, mr.SHA, nil)
-	if statuses != nil && len(statuses) > 0 && statuses[0].Status == string(gitlab.Success) {
+	if len(statuses) > 0 && statuses[0].Status == string(gitlab.Success) {
 		return a.acceptMrRequest(mr, opt)
 	}
 	err := a.updateCommitStatus(statuses, mr.SHA)
 	if err != nil {
 		return fmt.Errorf("Error occurred while changing status: %s ", err.Error())
 	}
-	return err
+	return nil
 }
 
 func (a AcceptMr) updateCommitStatus(statuses []*gitlab.CommitStatus, sha string) error {
-	if statuses != nil && len(statuses) > 0 && statuses[0].Status != "" {
+	if len(statuses) > 0 && statuses[0].Status != "" {
 		return nil
 	}
 	if a.PipelineName == "" && a.PipelineState == "" {
