@@ -17,7 +17,7 @@ import (
 func main() {
 	app := cli.NewApp()
 	app.Name = "accept-mr"
-	app.Version = "1.2.0"
+	app.Version = "1.0.0"
 	app.Usage = "Automatically accept Merge Request on project"
 	app.ErrWriter = os.Stderr
 	app.Flags = []cli.Flag{
