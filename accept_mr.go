@@ -92,17 +92,22 @@ func (a AcceptMr) acceptMrRequest(mr *gitlab.MergeRequest, opt *gitlab.AcceptMer
 
 		// Best effort, no error checking
 		newTitle := "WIP: " + mr.Title
-		a.Client.MergeRequests.UpdateMergeRequest(a.ProjectName, mr.IID, &gitlab.UpdateMergeRequestOptions{
+		_, _, err := a.Client.MergeRequests.UpdateMergeRequest(a.ProjectName, mr.IID, &gitlab.UpdateMergeRequestOptions{
 			Title: &newTitle,
 		})
-
+		if err != nil {
+			return fmt.Errorf("Error occurred while updating merge request: %s ", err.Error())
+		}
 		// Best effort, no error checking
 		msg := "Could not merge automatically due to merge error: " + info.MergeError
-		a.Client.Notes.CreateMergeRequestNote(a.ProjectName, mr.IID, &gitlab.CreateMergeRequestNoteOptions{
+		_, _, err1 := a.Client.Notes.CreateMergeRequestNote(a.ProjectName, mr.IID, &gitlab.CreateMergeRequestNoteOptions{
 			Body: &msg,
 		})
+		if err1 != nil {
+			return fmt.Errorf("Error occurred while commenting on merge request: %s ", err.Error())
+		}
 	}
-	return nil
+	return err
 }
 
 func (a AcceptMr) acceptBuildSucceed(mr *gitlab.MergeRequest, opt *gitlab.AcceptMergeRequestOptions) error {
@@ -114,7 +119,7 @@ func (a AcceptMr) acceptBuildSucceed(mr *gitlab.MergeRequest, opt *gitlab.Accept
 	if err != nil {
 		return fmt.Errorf("Error occurred while changing status: %s ", err.Error())
 	}
-	return nil
+	return err
 }
 
 func (a AcceptMr) updateCommitStatus(statuses []*gitlab.CommitStatus, sha string) error {
@@ -134,7 +139,7 @@ func (a AcceptMr) updateCommitStatus(statuses []*gitlab.CommitStatus, sha string
 	state := strings.ToLower(a.PipelineState)
 	stateValue := gitlab.BuildStateValue(state)
 	_, _, err := a.Client.Commits.SetCommitStatus(a.ProjectName, sha, &gitlab.SetCommitStatusOptions{
-		State: *gitlab.BuildState(stateValue),
+		State: *gitlab.Ptr(stateValue),
 		Name:  &a.PipelineName,
 	})
 	if err != nil {

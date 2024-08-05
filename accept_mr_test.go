@@ -21,22 +21,34 @@ func TestAcceptMr_Run(t *testing.T) {
 		fmt.Println(r.URL.Path)
 		if regexpMrNotes.MatchString(r.URL.Path) {
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(`{"body": "test mr note"}`))
+			_, err := w.Write([]byte(`{"body": "test mr note"}`))
+			if err != nil {
+				t.Error(err)
+			}
 		}
 		if regexpMrMerge.MatchString(r.URL.Path) {
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(`{"state": "merged"}`))
+			_, err := w.Write([]byte(`{"state": "merged"}`))
+			if err != nil {
+				t.Error(err)
+			}
 		}
 		if regexpMr.MatchString(r.URL.Path) {
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(`[{"title": "Test MR", "state": "opened"}]`))
+			_, err := w.Write([]byte(`[{"title": "Test MR", "state": "opened"}]`))
+			if err != nil {
+				t.Error(err)
+			}
 		}
 		if strings.Contains(r.URL.Path, "commits") {
 			w.WriteHeader(http.StatusOK)
 		}
 		if strings.Contains(r.URL.Path, "statuses") {
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(`[{"status": "opened"}]`))
+			_, err := w.Write([]byte(`[{"status": "opened"}]`))
+			if err != nil {
+				t.Error(err)
+			}
 		} else {
 			w.WriteHeader(http.StatusNotFound)
 		}

@@ -74,7 +74,10 @@ func main() {
 		},
 	}
 	app.Action = acceptMrAction
-	app.Run(os.Args)
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 func checkRequired(c *cli.Context) error {
 	if c.GlobalString("url") == "" {
