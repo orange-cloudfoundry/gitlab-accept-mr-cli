@@ -3,14 +3,15 @@ package main
 import (
 	"crypto/tls"
 	"fmt"
-	log "github.com/sirupsen/logrus"
-	"github.com/urfave/cli"
-	"github.com/xanzy/go-gitlab"
 	"net"
 	"net/http"
 	"os"
 	"strings"
 	"time"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/urfave/cli"
+	"github.com/xanzy/go-gitlab"
 )
 
 func main() {
@@ -104,13 +105,15 @@ func loadClient(c *cli.Context) (*gitlab.Client, error) {
 		IdleConnTimeout:       90 * time.Second,
 		TLSHandshakeTimeout:   10 * time.Second,
 		ExpectContinueTimeout: 1 * time.Second,
-		Proxy: http.ProxyFromEnvironment,
+		Proxy:                 http.ProxyFromEnvironment,
 	}
 	if !strings.HasSuffix(url, "/api/v4") {
 		url = strings.TrimSuffix(url, "/") + "/api/v4"
 	}
-	git := gitlab.NewClient(&http.Client{Transport: transport}, token)
-	err := git.SetBaseURL(url)
+	git, err := gitlab.NewClient(token, gitlab.WithBaseURL(url), gitlab.WithHTTPClient(&http.Client{Transport: transport}))
+	if err != nil {
+		log.Fatalf("Failed to create client: %v", err)
+	}
 	return git, err
 }
 

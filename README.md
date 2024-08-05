@@ -11,13 +11,13 @@ You can install this via the command-line with either `curl` or `wget`.
 #### via curl
 
 ```bash
-$ sh -c "$(curl -fsSL https://raw.github.com/ArthurHlt/gitlab-accept-mr-cli/master/bin/install.sh)"
+$ sh -c "$(curl -fsSL https://raw.github.com/orange-cloudfoundry/gitlab-accept-mr-cli/master/bin/install.sh)"
 ```
 
 #### via wget
 
 ```bash
-$ sh -c "$(wget https://raw.github.com/ArthurHlt/gitlab-accept-mr-cli/master/bin/install.sh -O -)"
+$ sh -c "$(wget https://raw.github.com/orange-cloudfoundry/gitlab-accept-mr-cli/master/bin/install.sh -O -)"
 ```
 
 ### On windows
@@ -30,7 +30,7 @@ Alternatively, if you have terminal interpreting shell you can also use command 
 Simply run in terminal:
 
 ```bash
-$ go get github.com/ArthurHlt/gitlab-accept-mr-cli
+$ go get github.com/orange-cloudfoundry/gitlab-accept-mr-cli
 ```
 
 ## Usage

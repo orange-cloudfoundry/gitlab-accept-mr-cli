@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
-	"github.com/xanzy/go-gitlab"
 	"net/http"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/xanzy/go-gitlab"
 )
 
 type AcceptMr struct {
