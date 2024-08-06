@@ -54,7 +54,6 @@ jobs:
         uses: goreleaser/goreleaser-action@v6
         if: success() && startsWith(github.ref, 'refs/tags/')
         with:
-          version: lastest
           args: release --rm-dist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
