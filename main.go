@@ -11,7 +11,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
-	"gitlab.com/gitlab-org/api/client-go"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 )
 
 func main() {
@@ -81,13 +81,13 @@ func main() {
 }
 func checkRequired(c *cli.Context) error {
 	if c.GlobalString("url") == "" {
-		return fmt.Errorf("Gitlab url can't be empty set with --url or GITLAB_URL env var")
+		return fmt.Errorf("gitlab url can't be empty set with --url or GITLAB_URL env var")
 	}
 	if c.GlobalString("token") == "" {
-		return fmt.Errorf("Gitlab token can't be empty set with --token or GITLAB_TOKEN env var")
+		return fmt.Errorf("gitlab token can't be empty set with --token or GITLAB_TOKEN env var")
 	}
 	if c.GlobalString("project") == "" {
-		return fmt.Errorf("Gitlab project can't be empty set with --project or GITLAB_PROJECT env var")
+		return fmt.Errorf("gitlab project can't be empty set with --project or GITLAB_PROJECT env var")
 	}
 	return nil
 }
