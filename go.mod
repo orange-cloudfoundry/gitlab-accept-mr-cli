@@ -1,13 +1,14 @@
 module github.com/orange-cloudfoundry/gitlab-accept-mr-cli
 
-go 1.23.4
+go 1.24.1
 
 require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/stretchr/testify v1.10.0
 	github.com/urfave/cli v1.22.16
-	github.com/xanzy/go-gitlab v0.115.0
 )
+
+require gitlab.com/gitlab-org/api/client-go v0.116.0
 
 require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.6 // indirect

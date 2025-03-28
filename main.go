@@ -11,7 +11,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
-	"github.com/xanzy/go-gitlab"
+	"gitlab.com/gitlab-org/api/client-go"
 )
 
 func main() {

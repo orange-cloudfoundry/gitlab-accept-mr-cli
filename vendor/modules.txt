@@ -29,9 +29,9 @@ github.com/stretchr/testify/assert/yaml
 # github.com/urfave/cli v1.22.16
 ## explicit; go 1.11
 github.com/urfave/cli
-# github.com/xanzy/go-gitlab v0.115.0
+# gitlab.com/gitlab-org/api/client-go v0.116.0
 ## explicit; go 1.19
-github.com/xanzy/go-gitlab
+gitlab.com/gitlab-org/api/client-go
 # golang.org/x/oauth2 v0.28.0
 ## explicit; go 1.23.0
 golang.org/x/oauth2
