@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	log "github.com/sirupsen/logrus"
-	"github.com/xanzy/go-gitlab"
+	gitlab "gitlab.com/gitlab-org/api/client-go"
 )
 
 type AcceptMr struct {
@@ -55,7 +55,7 @@ func (a AcceptMr) Run() error {
 		entry.Info("Finished accepting merge request ...")
 	}
 	if a.FailOnError && nbErrors > 0 {
-		return fmt.Errorf("You have %d merge request which can't be accepted", nbErrors)
+		return fmt.Errorf("you have %d merge request which can't be accepted", nbErrors)
 	}
 	return nil
 }
@@ -71,9 +71,9 @@ func (a AcceptMr) acceptMrRequest(mr *gitlab.MergeRequest, opt *gitlab.AcceptMer
 	info, resp, err := a.Client.MergeRequests.AcceptMergeRequest(a.ProjectName, mr.IID, opt)
 	if err != nil {
 		if resp != nil && resp.StatusCode == http.StatusMethodNotAllowed {
-			return fmt.Errorf("Merging process is blocked (grey button on MR web view). MR is probably in unresolved thread state.")
+			return fmt.Errorf("merging process is blocked (grey button on MR web view). MR is probably in unresolved thread state")
 		}
-		return fmt.Errorf("Error occurred while accepting: %s ", err.Error())
+		return fmt.Errorf("error occurred while accepting: %s ", err.Error())
 	}
 
 	if a.Message != "" {
@@ -81,7 +81,7 @@ func (a AcceptMr) acceptMrRequest(mr *gitlab.MergeRequest, opt *gitlab.AcceptMer
 			Body: &a.Message,
 		})
 		if err != nil {
-			return fmt.Errorf("Error when commenting on merge request: %s ", err.Error())
+			return fmt.Errorf("error when commenting on merge request: %s ", err.Error())
 		}
 	}
 
@@ -96,15 +96,15 @@ func (a AcceptMr) acceptMrRequest(mr *gitlab.MergeRequest, opt *gitlab.AcceptMer
 			Title: &newTitle,
 		})
 		if err != nil {
-			return fmt.Errorf("Error occurred while updating merge request: %s ", err.Error())
+			return fmt.Errorf("error occurred while updating merge request: %s ", err.Error())
 		}
 		// Best effort, no error checking
 		msg := "Could not merge automatically due to merge error: " + info.MergeError
-		_, _, err1 := a.Client.Notes.CreateMergeRequestNote(a.ProjectName, mr.IID, &gitlab.CreateMergeRequestNoteOptions{
+		_, _, err = a.Client.Notes.CreateMergeRequestNote(a.ProjectName, mr.IID, &gitlab.CreateMergeRequestNoteOptions{
 			Body: &msg,
 		})
-		if err1 != nil {
-			return fmt.Errorf("Error occurred while commenting on merge request: %s ", err.Error())
+		if err != nil {
+			return fmt.Errorf("error occurred while commenting on merge request: %s ", err.Error())
 		}
 	}
 	return nil
@@ -117,7 +117,7 @@ func (a AcceptMr) acceptBuildSucceed(mr *gitlab.MergeRequest, opt *gitlab.Accept
 	}
 	err := a.updateCommitStatus(statuses, mr.SHA)
 	if err != nil {
-		return fmt.Errorf("Error occurred while changing status: %s ", err.Error())
+		return fmt.Errorf("error occurred while changing status: %s ", err.Error())
 	}
 	return nil
 }
