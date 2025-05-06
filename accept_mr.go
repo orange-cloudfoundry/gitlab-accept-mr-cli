@@ -39,7 +39,7 @@ func (a AcceptMr) Run() error {
 		entry := log.WithFields(log.Fields(map[string]interface{}{
 			"title": mr.Title,
 		}))
-		if mr.WorkInProgress {
+		if mr.Draft {
 			entry.Warn("Skipping merge request, it is in WIP")
 			continue
 		}
@@ -60,14 +60,14 @@ func (a AcceptMr) Run() error {
 	return nil
 }
 
-func (a AcceptMr) accept(mr *gitlab.MergeRequest, opt *gitlab.AcceptMergeRequestOptions) error {
+func (a AcceptMr) accept(mr *gitlab.BasicMergeRequest, opt *gitlab.AcceptMergeRequestOptions) error {
 	if a.OnBuildSucceed {
 		return a.acceptBuildSucceed(mr, opt)
 	}
 	return a.acceptMrRequest(mr, opt)
 }
 
-func (a AcceptMr) acceptMrRequest(mr *gitlab.MergeRequest, opt *gitlab.AcceptMergeRequestOptions) error {
+func (a AcceptMr) acceptMrRequest(mr *gitlab.BasicMergeRequest, opt *gitlab.AcceptMergeRequestOptions) error {
 	info, resp, err := a.Client.MergeRequests.AcceptMergeRequest(a.ProjectName, mr.IID, opt)
 	if err != nil {
 		if resp != nil && resp.StatusCode == http.StatusMethodNotAllowed {
@@ -110,7 +110,7 @@ func (a AcceptMr) acceptMrRequest(mr *gitlab.MergeRequest, opt *gitlab.AcceptMer
 	return nil
 }
 
-func (a AcceptMr) acceptBuildSucceed(mr *gitlab.MergeRequest, opt *gitlab.AcceptMergeRequestOptions) error {
+func (a AcceptMr) acceptBuildSucceed(mr *gitlab.BasicMergeRequest, opt *gitlab.AcceptMergeRequestOptions) error {
 	statuses, _, _ := a.Client.Commits.GetCommitStatuses(a.ProjectName, mr.SHA, nil)
 	if len(statuses) > 0 && statuses[0].Status == string(gitlab.Success) {
 		return a.acceptMrRequest(mr, opt)
